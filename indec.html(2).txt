@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPI恋爱占有欲指数测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #ffe0f0 0%, #ffc2e0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(192, 0, 96, 0.18);
+            border: 2px solid #c71585;
+        }
+        h1 {
+            color: #c71585;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: #d83595;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .dimension-tag {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .dimension-tag span {
+            padding: 6px 16px;
+            background: #ffeff7;
+            border: 1px solid #c71585;
+            border-radius: 20px;
+            color: #c71585;
+            font-size: 14px;
+        }
+        .progress {
+            height: 10px;
+            background: #ffeff7;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #c71585, #ff69b4);
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.4s ease;
+        }
+        .question {
+            margin-bottom: 30px;
+            padding: 22px;
+            background: #fff0f7;
+            border-radius: 16px;
+            border-left: 5px solid #c71585;
+            display: none;
+        }
+        .question.active {
+            display: block;
+        }
+        .question p {
+            color: #c71585;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 17px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background: #ffffff;
+            border: 1px solid #ff9ac8;
+            border-radius: 10px;
+            color: #d83595;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .options label:hover {
+            background: #ffeff7;
+            border-color: #c71585;
+        }
+        .options input {
+            margin-right: 10px;
+            accent-color: #c71585;
+            width: 18px;
+            height: 18px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        .nav-btn {
+            padding: 12px 0;
+            background: #c71585;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            flex: 1;
+            transition: background 0.3s ease;
+        }
+        .nav-btn:disabled {
+            background: #ffc2e0;
+            cursor: not-allowed;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: #a50f6d;
+        }
+        .result {
+            margin-top: 35px;
+            padding: 35px;
+            background: #fff0f7;
+            border-radius: 24px;
+            display: none;
+            border: 1px dashed #c71585;
+        }
+        .result h2 {
+            color: #c71585;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+        .score-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(192, 0, 96, 0.1);
+        }
+        .score-card p {
+            color: #d83595;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .score {
+            font-size: 48px;
+            color: #c71585;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .level {
+            display: inline-block;
+            padding: 6px 20px;
+            background: #ffeff7;
+            border-radius: 20px;
+            color: #c71585;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .dimension-score {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .dimension-item {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 3px solid #ff69b4;
+        }
+        .dimension-item h4 {
+            color: #c71585;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+        .dimension-item .dim-score {
+            color: #d83595;
+            font-size: 22px;
+            font-weight: 600;
+        }
+        .result-desc {
+            color: #d83595;
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+        .result-tip {
+            background: #ffeff7;
+            padding: 18px;
+            border-radius: 12px;
+            color: #c71585;
+            font-size: 15px;
+            border: 1px solid #ff9ac8;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .dimension-score {
+                grid-template-columns: 1fr;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RPI恋爱占有欲指数测试</h1>
+        <p class="subtitle">基于控制欲望、嫉妒强度、情感依赖、关系不安全感四大维度，科学评估你的恋爱占有欲水平</p>
+        <div class="dimension-tag">
+            <span>控制欲望</span>
+            <span>嫉妒强度</span>
+            <span>情感依赖</span>
+            <span>关系不安全感</span>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- 测试题目 -->
+        <div class="question-container">
+            <!-- Q1 控制欲望 -->
+            <div class="question active" data-index="0" data-dim="control">
+                <p>1. 伴侣和异性朋友外出聚餐，你会要求对方实时分享定位或拍摄现场照片吗？</p>
+                <div class="options">
+                    <label><input type="radio" name="q0" value="1" required> 完全不会，信任对方的社交自由</label>
+                    <label><input type="radio" name="q0" value="2"> 偶尔会提醒，不会强制要求</label>
+                    <label><input type="radio" name="q0" value="3"> 会要求对方定时报备情况</label>
+                    <label><input type="radio" name="q0" value="4"> 必须实时分享定位，否则会生气</label>
+                    <label><input type="radio" name="q0" value="5"> 直接阻止对方参加聚餐</label>
+                </div>
+                <div class="btn-group">
+                    <button class="nav-btn" disabled>上一题</button>
+                    <button class="nav-btn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <!-- Q2 嫉妒强度 -->
+            <div class="question" data-index="1" data-dim="jealousy">
+                <p>2. 看到伴侣和异性同事有工作上的亲密互动（如拍肩膀、开玩笑），你的感受是？</p>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="1" required> 觉得很正常，不会在意</label>
+                    <label><input type="radio" name="q1" value="2"> 略有在意，但会自我调节</label>
+                    <label><input type="radio" name="q1" value="3"> 心里不舒服，会向伴侣表达不满</label>
+                    <label><input type="radio" name="q1" value="4"> 非常生气，会质问伴侣并要求保持距离</label>
+                    <label><input type="radio" name="q1" value="5"> 产生强烈嫉妒，甚至会和伴侣吵架</label>
+                </div>
+                <div class="btn-group">
+                    <button class="nav-btn" onclick="prevQuestion()">上一题</button>
+                    <button class="nav-btn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <!-- Q3 情感依赖 -->
+            <div class="question" data-index="2" data-dim="dependence">
+                <p>3. 伴侣出差或加班晚归，你会因为独处感到强烈的孤独和焦虑吗？</p>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="1" required> 完全不会，享受独处的时间</label>
+                    <label><input type="radio" name="q2" value="2"> 偶尔会想念，但不会焦虑</label>
+                    <label><input type="radio" name="q2" value="3"> 会有点孤单，希望对方尽快回来</label>
+                    <label><input type="radio" name="q2" value="4"> 非常焦虑，频繁发消息/打电话给对方</label>
+                    <label><input type="radio" name="q2" value="5"> 无法忍受独处，会要求对方提前结束行程</label>
+                </div>
+                <div class="btn-group">
+                    <button class="nav-btn" onclick="prevQuestion()">上一题</button>
+                    <button class="nav-btn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <!-- Q4 关系不安全感 -->
+            <div class="question" data-index="3" data-dim="insecurity">
+                <p>4. 伴侣没有及时回复消息，你会下意识认为对方可能在和别人暧昧吗？</p>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="1" required> 不会，相信对方有合理的原因</label>
+                    <label><input type="radio" name="q3" value="2"> 偶尔会疑惑，但很快打消念头</label>
+                    <label><input type="radio" name="q3" value="3"> 会有点担心，回复后会询问原因</label>
+                    <label><input type="radio" name="q3" value="4"> 会怀疑对方的行为，反复追问细节</label>
+                    <label><input type="radio" name="q3" value="5"> 认定对方有问题，甚至会翻查对方手机</label>
+                </div>
+                <div class="btn-group">
+                    <button class="nav-btn" onclick="prevQuestion()">上一题</button>
+                    <button class="nav-btn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <!-- Q5 控制欲望 -->
+            <div class="question" data-index="4" data-dim="control">
+                <p>5. 你会干预伴侣的穿搭风格、社交圈子或兴趣爱好吗？</p>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="1" required> 完全不会，尊重对方的选择</label>
+                    <label><input type="radio" name="q4" value="2"> 偶尔给出建议，不会强迫接受</label>
+                    <label><input type="radio" name="q4" value="3"> 会表达不满，希望对方按自己的喜好改变</label>
+                    <label><input type="radio" name="q4" value="4"> 强烈干预，要求对方必须听从自己的想法</label>
+                    <label><input type="radio" name="q4" value="5"> 限制对方的社交和爱好，只允许和自己认可的人交往</label>
+                </div>
+                <div class="btn-group">
+                    <button class="nav-btn" onclick="prevQuestion()">上一题</button>
+                    <button class="nav-btn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <!-- Q6 嫉妒强度 -->
+            <div class="question" data-index="5" data-dim="jealousy">
+                <p>6. 伴侣提起前任时，你会产生负面情绪吗？</p>
+                <div class="options">
+                    <label><input type="radio" name="q5" value="1" required> 不会，觉得过去的事无需在意</label>
+                    <label><input type="radio" name="q5" value="2"> 略有在意，但能平静听对方讲述</label>
+                    <label><input type="radio" name="q5" value="3"> 心里不舒服，会转移话题</label>
+                    <label><input type="radio" name="q5" value="4"> 非常介意，会要求对方不要再提及</label>
+                    <label><input type="radio" name="q5" value="5"> 极度愤怒，会和伴侣争吵甚至翻旧账</label>
+                </div>
+                <div class="btn-group">
+                    <button class="nav-btn" onclick="prevQuestion()">上一题</button>
+                    <button class="nav-btn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <!-- Q7 情感依赖 -->
+            <div class="question" data-index="6" data-dim="dependence">
+                <p>7. 做重要决定时，你会完全依赖伴侣的意见，无法自己做选择吗？</p>
+                <div class="options">
+                    <label><input type="radio" name="q6" value="1" required> 不会，有自己的判断和主见</label>
+                    <label><input type="radio" name="q6" value="2"> 会参考对方意见，最终自己决定</label>
+                    <label><input type="radio" name="q6" value="3"> 很纠结，需要对方帮自己做决定</label>
+                    <label><input type="radio" name="q6" value="4"> 完全听对方的，对方决定什么就做什么</label>
+                    <label><input type="radio" name="q6" value="5"> 没有对方的意见，根本无法做出任何决定</label>
+                </div>
+                <div class="btn-group">
+                    <button class="nav-btn" onclick="prevQuestion()">上一题</button>
+                    <button class="nav-btn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <!-- Q8 关系不安全感 -->
+            <div class="question" data-index="7" data-dim="insecurity">
+                <p>8. 你会经常担心伴侣不爱自己，或者会被别人抢走吗？</p>
+                <div class="options">
+                    <label><input type="radio" name="q7" value="1" required> 从不担心，对彼此的感情有信心</label>
+                    <label><input type="radio" name="q7" value="2"> 偶尔会担心，但很快会打消念头</label>
+                    <label><input type="radio" name="q7" value="3"> 经常担心，会向伴侣确认爱意</label>
+                    <label><input type="radio" name="q7" value="4"> 极度焦虑，需要伴侣不断证明对自己的爱</label>
+                    <label><input type="radio" name="q7" value="5"> 每天都活在恐惧中，甚至会限制伴侣和异性接触</label>
+                </div>
+                <div class="btn-group">
+                    <button class="nav-btn" onclick="prevQuestion()">上一题</button>
+                    <button class="nav-btn" onclick="showResult()">查看结果</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果展示 -->
+        <div class="result" id="result">
+            <h2>你的恋爱占有欲测评结果</h2>
+            <div class="score-card">
+                <p>综合占有欲指数</p>
+                <div class="score" id="totalScore">80</div>
+                <div class="level" id="levelTag">过度占有欲</div>
+            </div>
+            <div class="dimension-score">
+                <div class="dimension-item">
+                    <h4>控制欲望</h4>
+                    <div class="dim-score" id="controlScore">20</div>
+                </div>
+                <div class="dimension-item">
+                    <h4>嫉妒强度</h4>
+                    <div class="dim-score" id="jealousyScore">20</div>
+                </div>
+                <div class="dimension-item">
+                    <h4>情感依赖</h4>
+                    <div class="dim-score" id="dependenceScore">20</div>
+                </div>
+                <div class="dimension-item">
+                    <h4>关系不安全感</h4>
+                    <div class="dim-score" id="insecurityScore">20</div>
+                </div>
+            </div>
+            <div class="result-desc" id="resultDesc">
+                你的恋爱占有欲处于<strong>过度</strong>水平，在亲密关系中表现出强烈的控制欲、嫉妒心，同时伴随高度的情感依赖和关系不安全感。这种状态容易让伴侣感到压抑和束缚，长期下来可能会破坏彼此的信任和恋爱关系。你需要正视自己的不安全感，学会信任伴侣，同时培养个人的独立生活和兴趣爱好，减少对伴侣的过度依赖。
+            </div>
+            <div class="result-tip" id="resultTip">
+                <strong>相处建议：</strong> 尝试和伴侣坦诚沟通自己的不安，而非通过控制来获取安全感；给自己和对方足够的私人空间，记住“抓得越紧，失去得越快”。如果不安全感已经严重影响生活，可尝试通过心理咨询进行自我调节。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = document.querySelectorAll('.question').length;
+        const progressBar = document.getElementById('progressBar');
+        const result = document.getElementById('result');
+        
+        // 维度分值存储
+        const dimensionScores = {
+            control: 0,   // 控制欲望
+            jealousy: 0,  // 嫉妒强度
+            dependence: 0,// 情感依赖
+            insecurity: 0 // 关系不安全感
+        };
+        let totalScore = 0;
+
+        // 更新进度条
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // 切换题目
+        function switchQuestion(index) {
+            document.querySelectorAll('.question').forEach((q, i) => {
+                q.classList.toggle('active', i === index);
+            });
+            currentQuestion = index;
+            updateProgress();
+        }
+
+        // 下一题
+        function nextQuestion() {
+            const currentQ = document.querySelector(`.question[data-index="${currentQuestion}"]`);
+            const selected = currentQ.querySelector('input[type="radio"]:checked');
+            if (!selected) {
+                alert('请选择一个答案后继续！');
+                return;
+            }
+            // 累加当前题目对应维度的分值
+            const dim = currentQ.dataset.dim;
+            dimensionScores[dim] += parseInt(selected.value);
+            
+            if (currentQuestion < totalQuestions - 1) {
+                switchQuestion(currentQuestion + 1);
+            }
+        }
+
+        // 上一题
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                // 回退上一题的分值
+                const prevQ = document.querySelector(`.question[data-index="${currentQuestion}"]`);
+                const selected = prevQ.querySelector('input[type="radio"]:checked');
+                if (selected) {
+                    const dim = prevQ.dataset.dim;
+                    dimensionScores[dim] -= parseInt(selected.value);
+                }
+                switchQuestion(currentQuestion - 1);
+            }
+        }
+
+        // 计算结果并展示
+        function showResult() {
+            const currentQ = document.querySelector(`.question[data-index="${currentQuestion}"]`);
+            const selected = currentQ.querySelector('input[type="radio"]:checked');
+            if (!selected) {
+                alert('请选择一个答案后查看结果！');
+                return;
+            }
+            // 累加最后一题分值
+            const dim = currentQ.dataset.dim;
+            dimensionScores[dim] += parseInt(selected.value);
+
+            // 计算总分（各维度满分20，总分80）
+            totalScore = dimensionScores.control + dimensionScores.jealousy + dimensionScores.dependence + dimensionScores.insecurity;
+            
+            // 填充维度分值
+            document.getElementById('controlScore').innerText = dimensionScores.control;
+            document.getElementById('jealousyScore').innerText = dimensionScores.jealousy;
+            document.getElementById('dependenceScore').innerText = dimensionScores.dependence;
+            document.getElementById('insecurityScore').innerText = dimensionScores.insecurity;
+            document.getElementById('totalScore').innerText = totalScore;
+
+            // 判定占有欲等级
+            let level = '';
+            let desc = '';
+            let tip = '';
+            if (totalScore <= 16) {
+                level = '极低占有欲';
+                desc = '你的恋爱占有欲处于<strong>极低</strong>水平，在亲密关系中极度信任伴侣，给予对方充分的自由和空间。你拥有独立的人格和生活，不会因恋爱失去自我，这种状态让伴侣感到轻松。但有时可能会因为过于“佛系”，让伴侣觉得你不够在意这段关系，建议适当表达对彼此的关注。';
+                tip = '<strong>相处建议：</strong> 偶尔向伴侣表达关心和思念，让对方感受到你的爱意；在伴侣需要陪伴时，主动投入时间和精力，平衡“自由”与“亲密”的关系。';
+            } else if (totalScore <= 32) {
+                level = '低占有欲';
+                desc = '你的恋爱占有欲处于<strong>低</strong>水平，在亲密关系中能保持理性和信任，尊重伴侣的社交自由和个人空间，同时也有自己的生活和兴趣。这种健康的相处模式让恋爱关系更加轻松和谐，是理想的恋爱状态。';
+                tip = '<strong>相处建议：</strong> 继续保持当前的相处模式，在信任对方的同时，也不忘表达自己的情感需求，让彼此的关系在“自由”与“亲密”中找到平衡。';
+            } else if (totalScore <= 48) {
+                level = '适度占有欲';
+                desc = '你的恋爱占有欲处于<strong>适度</strong>水平，在亲密关系中会在意伴侣的行为，偶尔产生小的嫉妒或不安，但能通过自我调节和沟通化解。这种状态既体现了你对这段关系的重视，又不会给伴侣带来过度的压力，是最健康的占有欲水平。';
+                tip = '<strong>相处建议：</strong> 保持坦诚的沟通，当产生不安情绪时，及时和伴侣交流，而非默默猜忌；继续尊重对方的个人空间，让爱意在理解和信任中升温。';
+            } else if (totalScore <= 64) {
+                level = '较高占有欲';
+                desc = '你的恋爱占有欲处于<strong>较高</strong>水平，在亲密关系中会频繁产生嫉妒、不安的情绪，偶尔会试图控制伴侣的行为。这种状态已经开始给伴侣带来一定的压力，若不及时调整，可能会引发彼此的矛盾和争吵。你需要学会正视自己的不安全感，减少对伴侣的过度关注。';
+                tip = '<strong>相处建议：</strong> 尝试转移注意力，培养自己的兴趣爱好，减少对伴侣的情感依赖；当产生控制欲时，先冷静思考，再和伴侣沟通，避免情绪化的指责和要求。';
+            } else {
+                level = '过度占有欲';
+                desc = '你的恋爱占有欲处于<strong>过度</strong>水平，在亲密关系中表现出强烈的控制欲、嫉妒心，同时伴随高度的情感依赖和关系不安全感。这种状态容易让伴侣感到压抑和束缚，长期下来可能会破坏彼此的信任和恋爱关系。你需要正视自己的不安全感，学会信任伴侣，同时培养个人的独立生活和兴趣爱好，减少对伴侣的过度依赖。';
+                tip = '<strong>相处建议：</strong> 尝试和伴侣坦诚沟通自己的不安，而非通过控制来获取安全感；给自己和对方足够的私人空间，记住“抓得越紧，失去得越快”。如果不安全感已经严重影响生活，可尝试通过心理咨询进行自我调节。';
+            }
+
+            // 填充结果内容
+            document.getElementById('levelTag').innerText = level;
+            document.getElementById('resultDesc').innerHTML = desc;
+            document.getElementById('resultTip').innerHTML = tip;
+
+            // 显示结果，隐藏题目
+            document.querySelector('.question-container').style.display = 'none';
+            result.style.display = 'block';
+            // 滚动到结果区域
+            result.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 初始化进度条
+        updateProgress();
+    </script>
+</body>
+</html>
